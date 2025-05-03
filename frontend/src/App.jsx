@@ -13,6 +13,7 @@ import OrderDetails from './pages/OrderDetails.jsx'
 import './assets/icons.css'
 import BuyerOrders from './pages/BuyerOrders.jsx'
 import Logout from './pages/Logout.jsx'
+import i18n from './i18n.js'
 
 function App() {
    

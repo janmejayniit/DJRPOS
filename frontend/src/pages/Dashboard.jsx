@@ -1,18 +1,27 @@
 import {use, useEffect, useState} from 'react'
 import { fetchBuyerList, fetchOrders } from '../api/apiStore'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next';
 
 
 const Dashboard = () => {
 
+    const { t, i18n } = useTranslation();
     const [orders, setOrders] = useState([])
     const [buyers, setBuyers] = useState([])
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+
 
     useEffect(() => {
-        fetchOrders()
-        .then(setOrders)
+        fetchOrders(currentPage)
+        // .then(setOrders)
+        .then((data) => {
+            setOrders(data);
+            setTotalPages(Math.ceil(data.count / 10)); // Assuming 10 items per page    
+        })
         .catch((err) => console.error("Failed to load products", err));
-    }, []);
+    }, [currentPage]);
 
     useEffect(() => {
         fetchBuyerList()
@@ -20,15 +29,15 @@ const Dashboard = () => {
         .catch((err) => console.error("Failed to load products", err));
     }, []);
 
-
-
-
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
 
   return (
     <div className='container '>
         <div className='row mt-5'>
             <div className='col-12'>
-                <h1 className='text-center'>Dashboard</h1>
+                <h1 className='text-center'>{t('Dashboard')}</h1>
             </div>
 
         </div>
@@ -39,7 +48,7 @@ const Dashboard = () => {
                 <div className="p-6 card-body">
                     <div className="d-flex justify-content-between align-items-center mb-6">
                         <div>
-                            <h4 className="mb-0 fs-5">Earnings</h4>
+                            <h4 className="mb-0 fs-5">{t('Earnings')}</h4>
                         </div>
                         <div className="icon-shape icon-md bg-light-danger text-dark-danger rounded-circle">
                              <svg xmlns="http://www.w3.org/2000/svg" fill="#000000" width="800px" height="800px" viewBox="0 0 24 24">
@@ -49,14 +58,14 @@ const Dashboard = () => {
                     </div>
                     <div className="lh-1">
                         <h1 className="mb-2 fw-bold fs-2">
-                        {orders && orders.length
-                        ? (orders.reduce((acc, order) => acc + parseFloat(order.total_price), 0)).toLocaleString('en-IN', {
+                        {orders && orders.count
+                        ? (orders.results.reduce((acc, order) => acc + parseFloat(order.total_price), 0)).toLocaleString('en-IN', {
                             style: 'currency',
                             currency: 'INR',
                             minimumFractionDigits: 2,
                             })
                         : '₹0.00'}
-                            </h1><span>Monthly revenue</span>
+                            </h1><span>{t('Monthly revenue')}</span>
                     </div>
                 </div>
             </div>
@@ -66,7 +75,7 @@ const Dashboard = () => {
                 <div className="p-6 card-body">
                     <div className="d-flex justify-content-between align-items-center mb-6">
                         <div>
-                            <h4 className="mb-0 fs-5">Orders</h4>
+                            <h4 className="mb-0 fs-5">{t('Orders')}</h4>
                         </div>
                         <div className="icon-shape icon-md bg-light-warning text-dark-warning rounded-circle"><svg
                                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="1em" height="1em"
@@ -78,7 +87,7 @@ const Dashboard = () => {
                     </div>
                     <div className="lh-1">
                         <h1 className="mb-2 fw-bold fs-2">
-                            {orders && orders.length ?orders.length : 0}
+                            {orders && orders.count ?orders.count : 0}
                         </h1>
                     </div>
                 </div>
@@ -89,7 +98,7 @@ const Dashboard = () => {
                 <div className="p-6 card-body">
                     <div className="d-flex justify-content-between align-items-center mb-6">
                         <div>
-                            <h4 className="mb-0 fs-5">Customer</h4>
+                            <h4 className="mb-0 fs-5">{t('Customer')}</h4>
                         </div>
                         <div className="icon-shape icon-md bg-light-info text-dark-info rounded-circle"><svg
                                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="1em" height="1em"
@@ -112,15 +121,15 @@ const Dashboard = () => {
     <div className="mb-6 col-xl-12 col-lg-12 col-md-12 col-12">
         <div className="h-100 card-lg card shadow">
             <div className="card-header d-flex justify-content-between align-items-center">
-                <h3 className="mb-0 fs-5">Recent Order</h3>
+                <h3 className="mb-0 fs-5">{t('Recent Order')}</h3>
             </div>
             <div className="p-0 card-body">
                 <div className="table-responsive">
                     <table className="table-centered text-nowrap  table table-borderless table-hover">
                         <thead className="bg-light">
                             <tr>
-                                {/* <th scope="col">Order Number</th> */}
                                 <th scope='col'>S.N</th>
+                                <th scope="col">Order Number</th>
                                 <th scope="col">Product Name</th>
                                 <th scope="col">Order Date</th>
                                 <th scope="col">Price</th>
@@ -128,12 +137,12 @@ const Dashboard = () => {
                             </tr>
                         </thead>
                         <tbody>
-                        {orders && orders.length ?
-                            orders.map((order, index) => (
+                        {orders && orders.count ?
+                            orders.results.map((order, index) => (
                                 
                             <tr key={order.id}>
-                                {/* <td>{`#${order.id}`}</td> */}
                                 <td>{index + 1}</td>
+                                <td>{`#${order.order_id}`}</td>    
                                 <td>
                                     <Link to={`/order/buyer/${order.buyer.id}`} className="text-dark fw-bold">
                                     {order.buyer.first_name} {order.buyer.last_name} ({order.buyer.phone})
@@ -152,7 +161,7 @@ const Dashboard = () => {
                                         <Link to={`order/${order.id}`} className='btn btn-dark btn-sm'><i className="fa-solid fa-bars"></i></Link>
                                         {/* <button type="button" className="btn btn-outline-primary">Middle</button> */}
                                         <Link to={`/print/receipt/${order.id}`} className="btn btn-dark btn-sm">
-                                        <i className="fa-solid fa-print"></i>
+                                            <i className="fa-solid fa-print"></i>
                                         </Link>
                                     </div>
                                 </td>
@@ -161,6 +170,31 @@ const Dashboard = () => {
                         </tbody>
                     </table>
                 </div>
+                    <div className='card-footer'>
+                    
+                        {[...Array(totalPages).keys()].map((number) => (
+                            <button className="btn btn-dark btn-sm" style={{marginRight: '2px', borderRadius: '0px'}}
+                                    key={number + 1}
+                                    onClick={() => handlePageChange(number + 1)}
+                                    disabled={currentPage === number + 1}
+                            >
+                                {number + 1}
+                            </button>
+                        ))}
+                     
+
+                
+                    <div className='d-flex justify-content-between align-items-center mt-3'>
+                        <div className='d-flex align-items-center'>
+                            <span className='text-muted'>Showing {orders && orders.count ? orders.results.length : 0} of {orders && orders.count ? orders.count : 0} entries</span>
+                        </div>
+                        <div className='d-flex align-items-center'>
+                            <span className='text-muted'>Page {currentPage} of {totalPages}</span>
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
         </div>
     </div>

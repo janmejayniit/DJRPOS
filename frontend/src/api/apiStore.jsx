@@ -10,8 +10,8 @@ export const fetchProducts = async () => {
 };
 
 
-export const fetchOrders = async () => {
-    const res = await api.get("sales/orders");
+export const fetchOrders = async (page) => {
+    const res = await api.get(`sales/orders?page=${page}`);
     if (res.status !== 200) {
         throw new Error("Failed to fetch orders");
     }
