@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Orders, OrderItem, Buyer
-from .serializers import OrdersSerializer, OrderItemSerializer, BuyerSerializer
+from .serializers import OrdersSerializer, OrderItemSerializer, BuyerSerializer, BuyerWithOrdersSerializer
 # Create your views here.
 
 # @api_view(['POST'])
@@ -42,4 +42,31 @@ def get_orders(request, order_id):
 def get_buyers(request):
     buyers = Buyer.objects.all()
     serializer = BuyerSerializer(buyers, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_orders_list(request):
+    orders = Orders.objects.all().order_by('-created_at')
+    serializer = OrdersSerializer(orders, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+def get_buyer_orders(request, buyer_id):
+    # try:
+    #     buyer = Buyer.objects.get(id=buyer_id)
+    # except Buyer.DoesNotExist:
+    #     return Response({"error": "Buyer not found."}, status=status.HTTP_404_NOT_FOUND)
+    
+    # orders = Orders.objects.filter(buyer=buyer).order_by('-created_at')
+    # serializer = OrdersSerializer(orders, many=True)
+    # return Response(serializer.data, status=status.HTTP_200_OK)
+
+    try:
+        buyer = Buyer.objects.get(id=buyer_id)
+    except Buyer.DoesNotExist:
+        return Response({"error": "Buyer not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = BuyerWithOrdersSerializer(buyer)
     return Response(serializer.data, status=status.HTTP_200_OK)

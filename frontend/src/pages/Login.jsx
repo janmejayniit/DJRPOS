@@ -55,7 +55,7 @@ const Login = () => {
 
   return (
     <>
-        <div className="mt-2">
+        <div className="container mt-5">
             <div className="row">
                 <div className="col-md-4"></div>
                     <div className="col-md-4">

@@ -1,0 +1,33 @@
+.rounded-circle {
+    border-radius: 50% !important;
+}
+.bg-light-danger {
+    --fc-bg-opacity: 1;
+    background-color: #f8d6d6 !important;
+}
+.bg-light-warning {
+    --fc-bg-opacity: 1;
+    background-color: #fff3cd !important;
+}
+.bg-light-info {
+    --fc-bg-opacity: 1;
+    background-color: #cce1fe !important;
+}
+.text-dark-danger {
+    --fc-text-opacity: 1;
+    color: rgba(var(--fc-dark-danger-rgb), var(--fc-text-opacity)) !important;
+}
+
+.icon-shape {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.icon-md {
+    width: 2.5rem;
+    height: 2.5rem;
+    line-height: 2.5rem;
+}

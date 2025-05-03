@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from productApp.models import Product, Category
+import uuid
+from django.db import models
+from django.utils.timezone import now
 
 # Create your models here.
 
@@ -24,8 +27,10 @@ class Orders(models.Model):
         ('CASH', 'Cash'),
         ('CARD', 'Card'),
         ('ONLINE', 'Online'),
+        ('UPI', 'UPI'),
+        ('OTHER', 'Other'),
     ]
-
+    order_id = models.CharField(max_length=150, blank=True)
     cashier = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE, null=True, blank=True)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -36,6 +41,13 @@ class Orders(models.Model):
 
     # def __str__(self):
     #     return f"Sale by {self.cashier.username} for {self.product.name}"
+
+    def save(self, *args, **kwargs):
+        if not self.order_id:
+            date_str = now().strftime('%Y%m%d')
+            unique_number = Orders.objects.filter(created_at__date=now().date()).count() + 1
+            self.order_id = f"ORD-{date_str}-{unique_number:04d}"
+        super().save(*args, **kwargs)
 
 
 class OrderItem(models.Model):

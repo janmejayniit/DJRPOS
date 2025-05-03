@@ -2,9 +2,11 @@ import React from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { useCart } from '../../context/CartContext';
 
+
 const Header = () => {
     const { cartItems } = useCart();
     const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
+    const isAuthenticated = localStorage.getItem('access') !== null ? true : false;
   return (
     <>
         <nav className="navbar navbar-expand-lg fixed-top bg-body-tertiary bg-dark text-white" data-bs-theme="dark">
@@ -18,6 +20,9 @@ const Header = () => {
                     <li className="nav-item">
                         <NavLink className="nav-link" aria-current="page" to="/">Home</NavLink>
                     </li>
+                    <li className="nav-item">
+                        <NavLink className="nav-link" aria-current="page" to="/products">Products</NavLink>
+                    </li>
                     
                     <li className="nav-item">
                         <NavLink className="nav-link" to="/cart">Cart <span className="badge text-bg-secondary">{totalItems}</span></NavLink>
@@ -25,10 +30,14 @@ const Header = () => {
                      
                     
                 </ul>
-                <form className="d-flex" role="search">
-                    <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-                    <button className="btn btn-outline-success" type="submit">Search</button>
-                </form>
+                
+                 {isAuthenticated && (
+                    <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li className="nav-item">
+                        <NavLink to="/logout" className="nav-link">Logout</NavLink>
+                        </li>
+                    </ul> )}
+                 
                 </div>
             </div>
         </nav>

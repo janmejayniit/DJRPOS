@@ -12,7 +12,7 @@ class OrderItemInline(admin.TabularInline):
     extra = 1
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'cashier', 'buyer', 'total_price', 'payment_method', 'discount', 'created_at', 'updated_at')
+    list_display = ('id', 'order_id','cashier', 'buyer', 'total_price', 'payment_method', 'discount', 'created_at')
     search_fields = ('cashier__username', 'buyer__first_name', 'buyer__last_name')
     list_filter = ('payment_method', 'created_at')
     inlines = [OrderItemInline]

@@ -4,6 +4,7 @@ import React from 'react';
 import { useCart } from '../context/CartContext';
 import api from '../utils/axiosInstance';
 import { useNavigate } from 'react-router-dom';
+import { fetchBuyerList } from '../api/apiStore'
 
 const CheckoutPage = () => {
   const { cartItems, setCartItems } = useCart();
@@ -53,18 +54,10 @@ const CheckoutPage = () => {
     }
   };
 
-  const fetchBuyers = async () => {
-    try {
-      const response = await api.get('sales/buyers/');
-      console.log(response.data);
-        setBuyerList(response.data);
-    } catch (error) {
-      console.error('Error fetching buyers:', error);
-    }
-  }
-
   useEffect(() => {
-    fetchBuyers();
+        fetchBuyerList()
+        .then(setBuyerList)
+        .catch((err) => console.error("Failed to load products", err));
   }, []);
 
 

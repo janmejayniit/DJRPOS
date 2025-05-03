@@ -1,22 +1,11 @@
 import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
+import QuantityInput from '../components/QuantityInput ';
 
 const CartSidebar = () => {
-  const { cartItems, removeFromCart, addToCart } = useCart();
+  const { cartItems, removeFromCart, addToCart, updateItemQuantity } = useCart();
 
-   /*  const increment = () => {   
-        var quantity = document.getElementById("quantity").value;
-        quantity++;
-        document.getElementById("quantity").value = quantity;
-
-    }
-    const decrement = () => {   
-        var quantity = document.getElementById("quantity").value;
-        if(quantity > 1){
-            quantity--;
-            document.getElementById("quantity").value = quantity;
-        }
-    } */
+    
 
   return (
     <div className='container mx-auto'>
@@ -41,18 +30,21 @@ const CartSidebar = () => {
                             <span>{item.name}</span>
                         </td>
                         <td className=" items-center">
-                        <div class="input-group">
+                        {/* <div className="input-group">
                         
                             <button className="btn btn-dark" type="button"  style={{borderRadius:'0px'}}>
-                            <i class="bi bi-dash"></i>  
+                            <i className="bi bi-dash"></i>  
                             </button>
                             
                             <input type="text" id="quantity" className="form-control text-center" value={item.quantity} readonly/>
                             
                             <button className="btn btn-dark" type="button"  style={{borderRadius:'0px'}}>
-                            <i class="bi bi-plus"></i>  
+                            <i className="bi bi-plus"></i>  
                             </button>
-                        </div> 
+                        </div>  */}
+                        {/* <QuantityInput item={item} onChange={(quantity) => addToCart({ ...item, quantity })} /> */}
+                        <QuantityInput item={item} onChange={(newQty) => updateItemQuantity(item.id, newQty)} />
+
                         </td>
                         <td className=" items-center">
                             <span>₹{item.price}</span>
@@ -71,7 +63,7 @@ const CartSidebar = () => {
             </table>
       </div>
       <div className="card-footer">
-        <Link className="btn btn-dark" to="/checkout">Checkout</Link>    
+        <Link className="btn btn-dark btn-sm" to="/checkout">Checkout</Link>    
         </div>
     </div>
     </div>

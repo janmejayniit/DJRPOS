@@ -5,9 +5,18 @@ import { toast } from 'react-toastify';
 const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
+ 
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
+
+  const updateItemQuantity = (id, quantity) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id ? { ...item, quantity } : item
+      )
+    );
+  };
 
   const addToCart = (product) => {
     
@@ -32,7 +41,7 @@ export const CartProvider = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart }}>
+    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, setCartItems, updateItemQuantity  }}>
       {children}
     </CartContext.Provider>
   );

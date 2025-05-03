@@ -7,6 +7,7 @@ class BuyerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Buyer
         fields = '__all__'
+        extra_kwargs = {'email': {'validators': []}}  # disable uniqueness validation in the nested context
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -33,8 +34,8 @@ class OrdersSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Orders
-        fields = ['id', 'cashier', 'buyer', 'total_price', 'payment_method', 'discount', 'created_at', 'updated_at', 'items']
-    
+        fields = ['id', 'order_id','cashier', 'buyer', 'total_price', 'payment_method', 'discount', 'created_at', 'updated_at', 'items']
+
 
     def create(self, validated_data):
         buyer_data = validated_data.pop('buyer')
@@ -49,9 +50,17 @@ class OrdersSerializer(serializers.ModelSerializer):
                 'phone': buyer_data.get('phone', '')
             }
         )
+        
         order = Orders.objects.create(buyer=buyer, **validated_data)
 
         for item_data in items_data:
             OrderItem.objects.create(order=order, **item_data)
 
         return order
+
+class BuyerWithOrdersSerializer(serializers.ModelSerializer):
+    orders = OrdersSerializer(many=True, read_only=True, source='orders_set')
+
+    class Meta:
+        model = Buyer
+        fields = ['id', 'first_name', 'last_name', 'email', 'phone', 'orders']
